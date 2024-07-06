@@ -1,12 +1,30 @@
 {
-  "name": "Asistencias",
+  "name": "asistencias",
+  "version": "0.0.1",
+  "description": "Express,React Monorepo",
   "private": true,
+  "main": "index.js",
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint:api": "eslint apps/api/src --fix --ext .ts",
+    "lint:client": "eslint apps/client/src --fix --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:all": "npm run lint:api && npm run lint:client",
+    "prepare": "husky install"
   },
+  "keywords": [
+    "Monorepo",
+    "javascript",
+    "typescript",
+    "node",
+    "express",
+    "turborepo",
+    "husky",
+    "eslint",
+    "precommit",
+    "react",
+    "vite"
+  ],
   "devDependencies": {
     "prettier": "^3.2.5",
     "turbo": "^2.0.6",
@@ -19,5 +37,9 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7"
+  }
 }
