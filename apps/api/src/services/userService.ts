@@ -1,0 +1,26 @@
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+
+const prisma = new PrismaClient();
+
+export const createUser = async (
+	email: string,
+	password: string,
+	name: string,
+) => {
+	const hashedPassword = await bcrypt.hash(password, 10);
+	return prisma.user.create({
+		data: {
+			email,
+			password: hashedPassword,
+			name,
+			createdAt: new Date(),
+		},
+	});
+};
+
+export const getUserById = async (id: number) => {
+	return prisma.user.findUnique({
+		where: { id },
+	});
+};

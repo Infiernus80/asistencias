@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  password   String
+  name       String?
+  createdAt  DateTime  @default(now())
+  attendances Attendance[]
+  incidents  Incident[]
+  schedules  Schedule[]
+  vacations  Vacation[]
+  areas      UserArea[]
+  roles      UserRole[]
+}
+
+model Role {
+  id          Int             @id @default(autoincrement())
+  name        String          @unique
+  permissions RolePermission[]
+  users       UserRole[]
+}
+
+model Permission {
+  id    Int              @id @default(autoincrement())
+  name  String           @unique
+  roles RolePermission[]
+}
+
+model UserRole {
+  userId Int
+  roleId Int
+  user   User @relation(fields: [userId], references: [id])
+  role   Role @relation(fields: [roleId], references: [id])
+  @@id([userId, roleId])
+}
+
+model Attendance {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  checkIn    DateTime
+  checkOut   DateTime
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id])
+  incidents  Incident[]
+}
+
+model Incident {
+  id             Int       @id @default(autoincrement())
+  userId         Int
+  attendanceId   Int?
+  description    String
+  justification  String?
+  documentUrl    String?
+  createdAt      DateTime  @default(now())
+  user           User      @relation(fields: [userId], references: [id])
+  attendance     Attendance? @relation(fields: [attendanceId], references: [id])
+}
+
+model Schedule {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  startTime   DateTime
+  endTime     DateTime
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id])
+}
+
+model Holiday {
+  id         Int       @id @default(autoincrement())
+  name       String
+  date       DateTime
+  createdAt  DateTime  @default(now())
+}
+
+model Vacation {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  startDate  DateTime
+  endDate    DateTime
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id])
+}
+
+model Area {
+  id    Int      @id @default(autoincrement())
+  name  String   @unique
+  users UserArea[]
+}
+
+model UserArea {
+  userId Int
+  areaId Int
+  user   User @relation(fields: [userId], references: [id])
+  area   Area @relation(fields: [areaId], references: [id])
+  @@id([userId, areaId])
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  @@id([roleId, permissionId])
+}
